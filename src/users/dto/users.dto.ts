@@ -12,9 +12,7 @@ export const email = z
 export const username = z
   .string()
   .transform((str) => str.toLowerCase().trim())
-  .refine((username) => !/[^0-9a-z_]/.test(username), {
-    params: { i18n: 'zod:models.user.username.invalid', path: ['userame'] },
-  })
+  .refine((username) => !/[^0-9a-z_]/.test(username))
 
 export const password = z
   .string()
@@ -52,13 +50,23 @@ export const Signup = z.object({
 export class SignUpDto extends createZodDto(Signup) {}
 
 export const Login = z.object({
-  email: z.string(),
-  username: z.string(),
+  email: z
+    .string()
+    .email()
+    .transform((str) => str.toLowerCase().trim())
+    .optional(),
+  username: z
+    .string()
+    .transform((str) => str.toLowerCase().trim())
+    .refine((username) => !/[^0-9a-z_]/.test(username))
+    .optional(),
   password: z.string(),
   timezone: z.string().optional(),
 })
 
-export const QuickRegistr = z
+export class LoginDto extends createZodDto(Login) {}
+
+export const QuickRegister = z
   .object({
     email,
     countryIsoCode: z.string(),
@@ -97,7 +105,7 @@ export const ChangePassword = z.object({
   newPassword: password,
 })
 
-export type QuickRegistrType = z.infer<typeof QuickRegistr>
+export type QuickRegistrType = z.infer<typeof QuickRegister>
 export type UserType = z.infer<typeof UserSchema>
 
 export const AgreementsSchema = z.object({

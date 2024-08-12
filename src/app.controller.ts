@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import * as bcrypt from 'bcrypt'
 import { AppService } from './app.service'
-import { password, SignUpDto } from './users/dto/users.dto'
+import { LoginDto, password, SignUpDto } from './users/dto/users.dto'
 @Controller('api')
 export class AppController {
   constructor(private readonly appService: AppService) {}
@@ -16,5 +16,11 @@ export class AppController {
     const { password, ...rest } = signUpDto
     const hashedPassword = await bcrypt.hash(signUpDto.password, 12)
     return this.appService.register({ ...rest, hashedPassword })
+  }
+  @Post('login')
+  async login(@Body() loginDto: LoginDto) {
+    const { email, password } = loginDto
+
+    return this.appService.login(loginDto)
   }
 }
