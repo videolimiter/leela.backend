@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import * as bcrypt from 'bcrypt'
 import { User } from 'prisma/generated/zod'
@@ -21,7 +26,13 @@ export class AppService {
     const user = await this.usersService.findOneByUsernameOrEmail(data)
 
     if (!user || !(await bcrypt.compare(data.password, user.hashedPassword))) {
-      throw new BadRequestException('invalid credentials')
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'wrong credentials',
+        },
+        HttpStatus.FORBIDDEN,
+      )
     }
 
     const jwt = await this.jwtService.signAsync({ id: user.id })
