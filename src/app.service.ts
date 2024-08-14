@@ -13,13 +13,14 @@ export class AppService {
 
   async register(signUpDto: SignUpDto): Promise<User> {
     const { password, ...rest } = signUpDto
-    const hashedPassword = await bcrypt.hash(signUpDto.password, 12)
+    const hashedPassword = await bcrypt.hash(signUpDto.password, 10)
     return this.usersService.create({ ...rest, hashedPassword })
   }
 
   async login(data: LoginDto): Promise<string> {
     const user = await this.usersService.findOneByUsernameOrEmail(data)
-    if (!user || (await bcrypt.compare(data.password, user.hashedPassword))) {
+
+    if (!user || !(await bcrypt.compare(data.password, user.hashedPassword))) {
       throw new BadRequestException('invalid credentials')
     }
 
