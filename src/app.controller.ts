@@ -1,8 +1,17 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common'
 import { Request, Response } from 'express'
 import { AppService } from './app.service'
 import { LoginDto, SignUpDto } from './users/dto/users.dto'
 import { JwtService } from '@nestjs/jwt'
+import { AuthGuard } from './auth/auth.guard'
 @Controller('api')
 export class AppController {
   constructor(
@@ -33,10 +42,21 @@ export class AppController {
       message: 'login success',
     }
   }
+  @UseGuards(AuthGuard)
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie('jwt')
+    return {
+      message: 'logout success',
+    }
+  }
+
+  @UseGuards(AuthGuard)
   @Get('user')
-  async user(@Req() request: Request) {
-    const cookie = request.cookies['jwt']
-    const data = await this.jwtService.verifyAsync(cookie)
-    return data
+  async user(
+    @Req()
+    request: Request & { user: { id: number; iat: number; exp: number } },
+  ) {
+    return request.user
   }
 }

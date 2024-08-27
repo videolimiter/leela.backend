@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module'
 import { UsersService } from './users/users.service'
 import { JwtModule, JwtService } from '@nestjs/jwt'
 import { env } from 'process'
+import { AuthGuard } from './auth/auth.guard'
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { env } from 'process'
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, UsersService],
+  providers: [AppService, UsersService, AuthGuard],
 })
 export class AppModule {}
