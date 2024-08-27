@@ -138,6 +138,26 @@ export const UpdateUserSchema = UserSchema.pick({
   .partial()
   .merge(UserSchema.pick({ id: true }))
 
+export const BasicUserSchema = z.object({
+  id: z.number().int(),
+  username: z.string(),
+  email: z.string().email(),
+  firstName: z.string(),
+  lastName: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  avatarUrl: z.string().nullable(),
+  isGuide: z.boolean(),
+})
+
+export type BasicUserType = z.infer<typeof BasicUserSchema>
+
+export type UserLoggedType = {
+  id: number
+  iat: number
+  exp: number
+}
+
 export const UpdateUserSchemaAdmin = UpdateUserSchema.extend({
   status: z.string().optional(),
   blockReason: z.string().optional(),

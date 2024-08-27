@@ -8,6 +8,7 @@ import { Prisma } from '@prisma/client'
 import { error } from 'console'
 import { DatabaseService } from 'src/database/database.service'
 import { Login, LoginDto } from './dto/users.dto'
+import { BasicUserSelect } from './dto/users.select'
 @Injectable()
 export class UsersService {
   constructor(private readonly databaseService: DatabaseService) {}
@@ -41,7 +42,10 @@ export class UsersService {
   }
 
   async findOneById(id: number) {
-    return `This action returns a #${id} user`
+    return this.databaseService.user.findUnique({
+      where: { id },
+      select: BasicUserSelect,
+    })
   }
 
   async findOneByUsername(username: string) {

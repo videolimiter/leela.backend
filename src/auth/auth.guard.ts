@@ -6,6 +6,9 @@ import {
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Request } from 'express'
+import { UserLoggedType } from 'src/users/dto/users.dto'
+import { UsersController } from 'src/users/users.controller'
+import { UsersService } from 'src/users/users.service'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -21,7 +24,8 @@ export class AuthGuard implements CanActivate {
 
     try {
       const decoded = await this.jwtService.verifyAsync(token)
-      request['user'] = decoded // Сохраняем информацию о пользователе в запросе
+
+      request['user'] = decoded as UserLoggedType
       return true
     } catch (error) {
       throw new UnauthorizedException('Invalid token')

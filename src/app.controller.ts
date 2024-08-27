@@ -7,11 +7,11 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
 import { Request, Response } from 'express'
 import { AppService } from './app.service'
-import { LoginDto, SignUpDto } from './users/dto/users.dto'
-import { JwtService } from '@nestjs/jwt'
 import { AuthGuard } from './auth/auth.guard'
+import { LoginDto, SignUpDto, UserLoggedType } from './users/dto/users.dto'
 @Controller('api')
 export class AppController {
   constructor(
@@ -55,7 +55,7 @@ export class AppController {
   @Get('user')
   async user(
     @Req()
-    request: Request & { user: { id: number; iat: number; exp: number } },
+    request: Request & { user: UserLoggedType },
   ) {
     return request.user
   }
